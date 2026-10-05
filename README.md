@@ -1,4 +1,4 @@
-# 🏨 Hotelier - Hệ Thống Quản Lý Khách Sạn Cao Cấp (v3) | Hotel_Manager
+# 🏨 Hotelier - Hệ Thống Quản Lý Khách Sạn Cao Cấp| Hotel_Manager
 
 [![Node.js Version](https://img.shields.io/badge/node.js-%3E%3D%2018.0.0-blue.svg?style=flat-round&logo=node.js)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.0.1-green?style=flat-round&logo=express)](https://expressjs.com/)
@@ -8,7 +8,7 @@
 [![MoMo API](https://img.shields.io/badge/MoMo_Payment-Sandbox-pink?style=flat-round)](https://developers.momo.vn/)
 [![Groq SDK](https://img.shields.io/badge/Groq_AI-Llama_3.3-violet?style=flat-round)](https://groq.com/)
 
-**Hotelier v3** là hệ thống quản lý khách sạn trực tuyến toàn diện được xây dựng bằng kiến trúc Server-Side Rendering (SSR) hiện đại. Hệ thống tích hợp đầy đủ quy trình từ đặt phòng, chọn dịch vụ đi kèm, thanh toán online tự động cho tới trang quản trị (Admin Dashboard) chuyên nghiệp và **Trợ lý lễ tân ảo AI** hỗ trợ khách hàng theo thời gian thực.
+**Hotelier** là hệ thống quản lý khách sạn trực tuyến toàn diện được xây dựng bằng kiến trúc Server-Side Rendering (SSR) hiện đại. Hệ thống tích hợp đầy đủ quy trình từ đặt phòng, chọn dịch vụ đi kèm, thanh toán online tự động cho tới trang quản trị (Admin Dashboard) chuyên nghiệp và **Trợ lý lễ tân ảo AI** hỗ trợ khách hàng theo thời gian thực.
 
 ---
 
