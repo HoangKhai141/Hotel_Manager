@@ -20,8 +20,8 @@
     "exec": "ts-node -r tsconfig-paths/register ./src/index.ts"
   },
   "repository": {
-    "type": "",
-    "url": ""
+    "type": "git",
+    "url": "https://github.com/HoangKhai141/Hotel_Manager.git"
   },
   "keywords": [
     "node.js",
@@ -29,12 +29,12 @@
     "express",
     "mongodb"
   ],
-  "author": "HaNguyen051",
+  "author": "Hoang Minh Khai",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/HaNguyen051/"
+    "url": "https://github.com/HoangKhai141/Hotel_Manager/issues"
   },
-  "homepage": "https://github.com/HaNguyen051/",
+  "homepage": "https://github.com/HoangKhai141/Hotel_Manager",
   "dependencies": {
     "@prisma/client": "^6.3.0",
     "@quixo3/prisma-session-store": "3.1.13",
