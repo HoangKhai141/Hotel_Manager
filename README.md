@@ -1,4 +1,4 @@
-# 🏨 Hotelier - Hệ Thống Quản Lý Khách Sạn Cao Cấp (v3)
+# 🏨 Hotelier - Hệ Thống Quản Lý Khách Sạn Cao Cấp (v3) | Hotel_Manager
 
 [![Node.js Version](https://img.shields.io/badge/node.js-%3E%3D%2018.0.0-blue.svg?style=flat-round&logo=node.js)](https://nodejs.org/)
 [![Express.js](https://img.shields.io/badge/Express-5.0.1-green?style=flat-round&logo=express)](https://expressjs.com/)
