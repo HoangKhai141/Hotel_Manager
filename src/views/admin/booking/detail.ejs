@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Chi tiết Booking #<%= (typeof booking !== 'undefined' && booking) ? booking.id : 'N/A' %> - Hotel Manager</title>
+    <link href="/admin/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('../layout/header'); -%>
+
+    <div id="layoutSidenav">
+        <%- include('../layout/sidenav'); -%>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Chi tiết Đặt phòng #<%= (typeof booking !== 'undefined' && booking) ? booking.id : 'N/A' %></h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/booking">Đặt phòng</a></li>
+                        <li class="breadcrumb-item active">Chi tiết</li>
+                    </ol>
+
+                    <% if (typeof success_msg !== 'undefined' && success_msg && success_msg.length > 0) { %>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <%- success_msg[0] %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+                    <% if (typeof error_msg !== 'undefined' && error_msg && error_msg.length > 0) { %>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <%- error_msg[0] %>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <% } %>
+                     <% if (typeof error !== 'undefined' && error) { %>
+                        <div class="alert alert-danger"><%= error %></div>
+                    <% } %>
+
+                    <% if (typeof booking !== 'undefined' && booking) { %>
+                        
+                        <form action="/admin/booking/update" method="POST" name="updateForm">
+                            <input type="hidden" name="id" value="<%= booking.id %>" />
+
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <div class="card mb-4 shadow-sm">
+                                        <div class="card-header"><h5 class="my-1"><i class="fas fa-info-circle me-2"></i>Thông tin Booking</h5></div>
+                                        <div class="card-body">
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6"><strong>ID:</strong> #<%= booking.id %></div>
+                                                <div class="col-sm-6"><strong>Ngày tạo:</strong> <%= new Date(booking.createdAt).toLocaleString('vi-VN') %></div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <div class="col-sm-6">
+                                                    <label for="status" class="form-label fw-bold">Trạng thái:</label>
+                                                    <select name="status" id="status" class="form-select form-select-sm">
+                                                        <% if (typeof bookingStatuses !== 'undefined' && bookingStatuses) { %>
+                                                            <% bookingStatuses.forEach(function(s) { %>
+                                                                <option value="<%= s %>" <%= booking.status === s ? 'selected' : '' %>>
+                                                                    <%= s %>
+                                                                </option>
+                                                            <% }); %>
+                                                        <% } else { %>
+                                                            <option value="<%= booking.status %>" selected><%= booking.status %></option>
+                                                        <% } %>
+                                                    </select>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <label for="totalPrice" class="form-label fw-bold">Tổng tiền:</label>
+                                                    <input type="text" id="totalPrice" class="form-control form-control-sm" 
+                                                           value="<%= booking.totalPrice ? booking.totalPrice.toLocaleString('vi-VN') + 'đ' : 'N/A' %>" 
+                                                           readonly />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="checkInDate" class="form-label fw-bold">Ngày nhận phòng:</label>
+                                                    <input type="datetime-local" id="checkInDate" name="checkInDate" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.checkInDate ? new Date(booking.checkInDate.getTime() - (booking.checkInDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" />
+                                                </div>
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="checkOutDate" class="form-label fw-bold">Ngày trả phòng:</label>
+                                                    <input type="datetime-local" id="checkOutDate" name="checkOutDate" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.checkOutDate ? new Date(booking.checkOutDate.getTime() - (booking.checkOutDate.getTimezoneOffset() * 60000)).toISOString().slice(0, 16) : '' %>" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-4 shadow-sm">
+                                        <div class="card-header"><h5 class="my-1"><i class="fas fa-user me-2"></i>Thông tin Khách</h5></div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="guestName" class="form-label">Tên khách:</label>
+                                                    <input type="text" id="guestName" name="guestName" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.guestName || '' %>" />
+                                                </div>
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="guestPhone" class="form-label">Điện thoại:</label>
+                                                    <input type="tel" id="guestPhone" name="guestPhone" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.guestPhone || '' %>" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="guestEmail" class="form-label">Email:</label>
+                                                    <input type="email" id="guestEmail" name="guestEmail" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.guestEmail || '' %>" />
+                                                </div>
+                                                <div class="col-sm-6 mb-3">
+                                                    <label for="guestCount" class="form-label">Số người:</label>
+                                                    <input type="number" id="guestCount" name="guestCount" 
+                                                           class="form-control form-control-sm" 
+                                                           value="<%= booking.guestCount || 1 %>" min="1" />
+                                                </div>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="specialRequest" class="form-label">Yêu cầu đặc biệt:</label>
+                                                <textarea id="specialRequest" name="specialRequest" 
+                                                          class="form-control form-control-sm" rows="2"><%= booking.specialRequest || '' %></textarea>
+                                            </div>
+                                            <% if (booking.user) { %>
+                                                <p class="mb-0 text-muted small">User: <%= booking.user.username %></p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div><div class="col-lg-5">
+                                    <div class="card mb-4 shadow-sm">
+                                        <div class="card-header"><h5 class="my-1"><i class="fas fa-bed me-2"></i>Thông tin Phòng</h5></div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="roomId" class="form-label">Chọn Phòng (Đổi phòng):</label>
+                                                <select name="roomId" id="roomId" class="form-select form-select-sm">
+                                                    <% const currentRoomId = (booking.roomBookings && booking.roomBookings[0]) ? booking.roomBookings[0].roomId : null; %>
+                                                    <option value="">-- Giữ nguyên phòng --</option>
+                                                    
+                                                    <% if (typeof rooms !== 'undefined' && rooms.length > 0) { %>
+                                                        <% rooms.forEach(function(room) { %>
+                                                            <option value="<%= room.id %>" <%= currentRoomId === room.id ? 'selected' : '' %> data-capacity="<%= room.capacity %>">
+                                                                <%= room.name %> - <%= room.type %> (<%= room.capacity %> người) - <%= room.price.toLocaleString('vi-VN') %>đ/đêm
+                                                            </option>
+                                                        <% }); %>
+                                                    <% } %>
+                                                    
+                                                    <% if (currentRoomId && (!rooms || !rooms.find(r => r.id === currentRoomId)) && booking.roomBookings?.[0]?.room) { %>
+                                                         <option value="<%= currentRoomId %>" selected data-capacity="<%= booking.roomBookings[0].room.capacity %>">
+                                                             <%= booking.roomBookings[0].room.name %> (Phòng hiện tại - <%= booking.roomBookings[0].room.status %>)
+                                                         </option>
+                                                    <% } %>
+                                                </select>
+                                                <div id="capacityWarningDetail" class="form-text text-danger d-none mt-1">Cảnh báo: Số người vượt quá sức chứa của phòng đã chọn.</div>
+                                            </div>
+
+                                            <% if (booking.roomBookings && booking.roomBookings[0] && booking.roomBookings[0].room) { %>
+                                                <% const rb = booking.roomBookings[0]; %>
+                                                <div class="text-center mb-2">
+                                                    <% if (rb.room.image) { %>
+                                                        <img src="<%= roomImageUrl(rb.room.image) %>" alt="<%= rb.room.name %>" 
+                                                             class="img-fluid rounded" style="max-height: 180px; width: 100%; object-fit: cover;" />
+                                                    <% } else { %>
+                                                        <div style="height: 150px; width: 100%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                                                            <p style="color: #999;">No image</p>
+                                                        </div>
+                                                    <% } %>
+                                                </div>
+                                                <p class="mb-1"><small><strong>Phòng hiện tại:</strong> <%= rb.room.name %> (<%= rb.room.type %>)</small></p>
+                                                <p class="mb-1"><small><strong>Giá gốc/đêm:</strong> <%= rb.price ? rb.price.toLocaleString('vi-VN') + 'đ' : 'N/A' %></small></p>
+                                                <p class="mb-0"><small><strong>Số đêm đã đặt:</strong> <%= rb.quantity || 'N/A' %></small></p>
+                                            <% } else { %>
+                                                <p class="text-danger">Lỗi: Không tìm thấy thông tin phòng đã đặt.</p>
+                                            <% } %>
+                                        </div>
+                                    </div>
+
+                                    <div class="card mb-4 shadow-sm border-success">
+                                        <div class="card-header bg-success text-white">
+                                            <h5 class="my-1"><i class="fas fa-credit-card me-2"></i>Thanh Toán</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <% if (booking.payment) { %>
+                                                <p class="mb-1"><small><strong>Payment ID:</strong> #<%= booking.payment.id %></small></p>
+                                                <p class="mb-1">
+                                                    <small><strong>Trạng thái:</strong></small>
+                                                    <%
+                                                        let paymentBadgeClass = 'bg-secondary';
+                                                        if (booking.payment.paymentStatus === 'SUCCESS') paymentBadgeClass = 'bg-success';
+                                                        else if (booking.payment.paymentStatus === 'PENDING') paymentBadgeClass = 'bg-warning text-dark';
+                                                        else if (booking.payment.paymentStatus === 'FAILED') paymentBadgeClass = 'bg-danger';
+                                                        else if (booking.payment.paymentStatus === 'REFUNDED') paymentBadgeClass = 'bg-info text-dark';
+                                                    %>
+                                                    <span class="badge <%= paymentBadgeClass %>"><%= booking.payment.paymentStatus %></span>
+                                                </p>
+                                                <a href="/admin/view-payment/<%= booking.payment.id %>" class="btn btn-sm btn-primary w-100 mt-2">
+                                                    <i class="fas fa-eye me-1"></i> Xem chi tiết Payment
+                                                </a>
+                                            
+                                            <% } else { %>
+                                                <p class="text-muted small">Chưa có thanh toán cho booking này.</p>
+                                                
+                                                <div class="input-group input-group-sm">
+                                                    <select name="paymentMethod" class="form-select">
+                                                        <option value="CASH">Tiền mặt</option>
+                                                        <option value="CARD">Thẻ</option>
+                                                        <option value="BANK_TRANSFER">Chuyển khoản</option>
+                                                        <option value="MOBILE_PAYMENT">Ví điện tử</option>
+                                                    </select>
+                                                    
+                                                    <button type="submit" class="btn btn-success" 
+                                                            formaction="/admin/handle-create-payment">
+                                                        Tạo
+                                                    </button>
+                                                </div>
+                                                <% } %>
+                                        </div>
+                                    </div>
+                                </div></div><div class="mt-4 d-flex justify-content-between">
+                                <a href="/admin/booking" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i> Quay lại
+                                </a>
+                                <div>
+                                    <% if (booking.status === 'PENDING' || booking.status === 'CANCELLED') { %>
+                                        <button type="button" class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                            <i class="fas fa-trash-alt me-1"></i> Xóa
+                                        </button>
+                                    <% } %>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                                        <i class="fas fa-save me-1"></i> Lưu thay đổi
+                                    </button>
+                                </div>
+                            </div>
+                        </form> 
+                        <div class="modal fade" id="deleteModal" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header bg-danger text-white">
+                                        <h5 class="modal-title">Xác nhận xóa</h5>
+                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        Bạn có chắc chắn muốn xóa vĩnh viễn booking #<%= booking.id %> không?
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                        <form action="/admin/booking/delete/<%= booking.id %>" method="POST" class="d-inline">
+                                            <button type="submit" class="btn btn-danger">Xác nhận Xóa</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    <% } else { %>
+                        <div class="alert alert-warning">Không tìm thấy booking</div>
+                        <a href="/admin/booking" class="btn btn-secondary">Quay lại</a>
+                    <% } %>
+
+                </div>
+            </main>
+            <%- include('../layout/footer'); -%>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+    <script>
+        // JS để submit form chính khi bấm nút (có vẻ hơi thừa vì type="submit" đã làm việc này)
+        // document.getElementById('submitBtn').addEventListener('click', function(e) {
+        //     e.preventDefault(); 
+        //     document.querySelector('form[name="updateForm"]').submit(); 
+        // });
+
+        // JS cho check capacity (Giữ nguyên)
+        const guestCountInputDetail = document.getElementById('guestCount');
+        const roomSelectDetail = document.getElementById('roomId');
+        const capacityWarningDetail = document.getElementById('capacityWarningDetail');
+
+        function checkCapacityDetail() {
+             if(!guestCountInputDetail || !roomSelectDetail || !capacityWarningDetail) return;
+             const selectedRoomOption = roomSelectDetail.options[roomSelectDetail.selectedIndex];
+             // Chỉ kiểm tra nếu người dùng CHỌN phòng mới
+             if (selectedRoomOption && selectedRoomOption.value !== "") {
+                 const roomCapacity = parseInt(selectedRoomOption.dataset.capacity || '0');
+                 const guestCount = parseInt(guestCountInputDetail.value || '1');
+                 
+                 if (roomCapacity > 0 && guestCount > roomCapacity) {
+                      capacityWarningDetail.classList.remove('d-none');
+                 } else {
+                      capacityWarningDetail.classList.add('d-none');
+                 }
+             } else {
+                  capacityWarningDetail.classList.add('d-none'); // Ẩn nếu chọn "Giữ nguyên phòng"
+             }
+        }
+        if(guestCountInputDetail) guestCountInputDetail.addEventListener('input', checkCapacityDetail);
+        if(roomSelectDetail) roomSelectDetail.addEventListener('change', checkCapacityDetail);
+        document.addEventListener('DOMContentLoaded', checkCapacityDetail);
+
+        // JS cho min checkout date (Giữ nguyên)
+       const checkInInputDetail = document.getElementById('checkInDate');
+       const checkOutInputDetail = document.getElementById('checkOutDate');
+       if(checkInInputDetail && checkOutInputDetail) {
+            checkInInputDetail.addEventListener('change', function() {
+                if (this.value) {
+                     checkOutInputDetail.min = this.value;
+                     if (checkOutInputDetail.value && new Date(checkOutInputDetail.value) < new Date(this.value)) {
+                         checkOutInputDetail.value = '';
+                     }
+                } else {
+                     checkOutInputDetail.min = '';
+                }
+            });
+            if (checkInInputDetail.value) {
+                checkOutInputDetail.min = checkInInputDetail.value;
+            }
+       }
+    </script>
+</body>
+</html>

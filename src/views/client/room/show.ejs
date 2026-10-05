@@ -1,0 +1,167 @@
+<%- include('../layout/header'); -%>
+
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(/client/img/carousel-1.jpg);">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center pb-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Phòng Nghỉ</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Phòng</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container-fluid booking home-search room-search pb-0">
+    <div class="container">
+        <div class="bg-white shadow home-search-panel">
+            <form action="/rooms" method="GET">
+                <div class="row g-3 align-items-end">
+                            <div class="col-6 col-lg">
+                                <label class="home-search-label" for="roomCheckIn">Nhận phòng</label>
+                                <div class="date" id="date1" data-target-input="nearest">
+                                    <input type="date" name="checkIn" class="form-control" 
+                                        id="roomCheckIn" placeholder="Chọn ngày" 
+                                        value="<%= searchParams.checkIn || '' %>" />
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg">
+                                <label class="home-search-label" for="roomCheckOut">Trả phòng</label>
+                                <div class="date" id="date2" data-target-input="nearest">
+                                    <input type="date" name="checkOut" class="form-control" 
+                                        id="roomCheckOut" placeholder="Chọn ngày" 
+                                        value="<%= searchParams.checkOut || '' %>" />
+                                </div>
+                            </div>
+                            <div class="col-6 col-lg">
+                                <label class="home-search-label" for="roomTypeFilter">Loại phòng</label>
+                                <select id="roomTypeFilter" class="form-select" name="type">
+                                    <option value="" <%= !searchParams.type ? 'selected' : '' %>>Tất cả loại phòng</option>
+                                    <option value="Single" <%= searchParams.type === 'Single' ? 'selected' : '' %>>Single</option>
+                                    <option value="Double" <%= searchParams.type === 'Double' ? 'selected' : '' %>>Double</option>
+                                    <option value="Suite" <%= searchParams.type === 'Suite' ? 'selected' : '' %>>Suite</option>
+                                    <option value="Deluxe" <%= searchParams.type === 'Deluxe' ? 'selected' : '' %>>Deluxe</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-lg">
+                                <label class="home-search-label" for="roomCapacityFilter">Số khách</label>
+                                <select id="roomCapacityFilter" class="form-select" name="capacity">
+                                    <option value="" <%= !searchParams.capacity ? 'selected' : '' %>>Số người</option>
+                                    <option value="1" <%= searchParams.capacity === '1' ? 'selected' : '' %>>1 người</option>
+                                    <option value="2" <%= searchParams.capacity === '2' ? 'selected' : '' %>>2 người</option>
+                                    <option value="3" <%= searchParams.capacity === '3' ? 'selected' : '' %>>3+ người</option>
+                                </select>
+                            </div>
+                    <div class="col-12 col-lg-auto">
+                        <button class="btn btn-primary home-search-button" type="submit">
+                            <i class="fa fa-search me-2" aria-hidden="true"></i>Tìm phòng
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="container-xxl py-5">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">Phòng Của Chúng Tôi</h6>
+            <h1 class="mb-5">Khám Phá <span class="text-primary text-uppercase">Các Loại Phòng</span></h1>
+        </div>
+
+        <div class="row g-4">
+            <% if (rooms && rooms.length > 0) { %>
+                <% rooms.forEach(function(room) { %>
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="room-item shadow rounded overflow-hidden h-100">
+                            <div class="position-relative">
+                                <img class="img-fluid w-100" 
+                                     src="<%= roomImageUrl(room.image) %>" 
+                                     alt="<%= room.name %>" 
+                                     class="room-card-image">
+                                <small class="position-absolute start-0 top-100 translate-middle-y bg-primary text-white rounded py-1 px-3 ms-4">
+                                    <%= room.price.toLocaleString('vi-VN') %>đ/Đêm
+                                </small>
+                            </div>
+                            <div class="p-4 mt-2">
+                                <div class="d-flex justify-content-between mb-3">
+                                    <h5 class="mb-0 text-truncate"><%= room.name %></h5>
+                                    <div class="ps-2">
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                        <small class="fa fa-star text-primary"></small>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mb-3 room-card-meta">
+                                    <small><i class="fa fa-bed text-primary me-1"></i><%= room.type %></small>
+                                    <small><i class="fa fa-user text-primary me-1"></i><%= room.capacity %> khách</small>
+                                    <small><i class="fa fa-wifi text-primary me-1"></i>Wifi</small>
+                                </div>
+                                <p class="text-body mb-3 room-card-description">
+                                    <%= room.description || 'Mô tả phòng đang được cập nhật.' %>
+                                </p>
+                                <div class="room-card-actions">
+                                    <a class="btn btn-sm btn-outline-primary" href="/room/detail/<%= room.id %>">Chi tiết</a>
+                                    <a class="btn btn-sm btn-primary" href="/booking?roomId=<%= room.id %>">Đặt phòng</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-warning">
+                        <h4><i class="fas fa-search me-2"></i>Không tìm thấy phòng nào phù hợp.</h4>
+                        <p>Vui lòng thử lại với tiêu chí tìm kiếm khác.</p>
+                        <a href="/rooms" class="btn btn-outline-warning mt-2">Xem tất cả phòng</a>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+
+        <% if (pagination && pagination.totalPages > 1) { %>
+            <div class="row mt-5">
+                <div class="col-12">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item <%= pagination.currentPage === 1 ? 'disabled' : '' %>">
+                                <a class="page-link" href="<%= getPageLink(pagination.currentPage - 1) %>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+
+                            <% for(let i = 1; i <= pagination.totalPages; i++) { %>
+                                <li class="page-item <%= pagination.currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="<%= getPageLink(i) %>"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <li class="page-item <%= pagination.currentPage === pagination.totalPages ? 'disabled' : '' %>">
+                                <a class="page-link" href="<%= getPageLink(pagination.currentPage + 1) %>" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        <% } %>
+        
+    </div>
+</div>
+<%
+  function getPageLink(page) {
+      // Chuyển object searchParams thành URLSearchParams string
+      // Cách đơn giản trong EJS: Tự xây dựng chuỗi
+      let queryString = `page=${page}`;
+      if (searchParams.type) queryString += `&type=${searchParams.type}`;
+      if (searchParams.capacity) queryString += `&capacity=${searchParams.capacity}`;
+      if (searchParams.checkIn) queryString += `&checkIn=${searchParams.checkIn}`;
+      if (searchParams.checkOut) queryString += `&checkOut=${searchParams.checkOut}`;
+      return `?${queryString}`;
+  }
+%>
+<%- include('../layout/footer'); -%>

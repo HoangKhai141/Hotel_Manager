@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>Tạo Booking Mới - Hotel Manager</title>
+    <link href="/admin/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('../layout/header'); -%>
+
+    <div id="layoutSidenav">
+        <%- include('../layout/sidenav'); -%>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Tạo Booking Mới</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/booking">Đặt phòng</a></li>
+                        <li class="breadcrumb-item active">Tạo mới</li>
+                    </ol>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                             <div class="card shadow-lg border-0 rounded-lg">
+                                 <div class="card-header"><h5 class="my-2"><i class="fas fa-calendar-plus me-2"></i>Nhập thông tin đặt phòng</h5></div>
+                                 <div class="card-body">
+                                     <% if (typeof error !== 'undefined' && error) { %>
+                                         <div class="alert alert-danger"><%- error %></div>
+                                     <% } %>
+
+                                     <form action="/admin/booking/create" method="post">
+                                         <div class="mb-3">
+                                             <label for="userId" class="form-label fw-bold">Chọn Khách Hàng *</label>
+                                             <select name="userId" id="userId" class="form-select" required>
+                                                 <option value="" disabled <%= !(oldData && oldData.userId) ? 'selected' : '' %>>-- Chọn người dùng --</option>
+                                                 <% if (typeof users !== 'undefined' && users.length > 0) { %>
+                                                     <% users.forEach(user => { %>
+                                                         <option value="<%= user.id %>" data-fullname="<%= user.fullName || '' %>" data-email="<%= user.username %>" <%= (oldData && oldData.userId == user.id) ? 'selected' : '' %>>
+                                                             <%= user.fullName || user.username %> (<%= user.username %>)
+                                                         </option>
+                                                     <% }) %>
+                                                 <% } else { %>
+                                                      <option disabled>Không tìm thấy người dùng nào</option>
+                                                  <% } %>
+                                             </select>
+                                         </div>
+                                         <hr>
+                                         <p class="text-muted small">Thông tin khách (sẽ tự điền nếu chọn user, có thể sửa lại):</p>
+                                         <div class="row">
+                                             <div class="mb-3 col-md-6">
+                                                 <label for="guestName" class="form-label">Tên khách *</label>
+                                                 <input name="guestName" id="guestName" type="text" class="form-control" value="<%= oldData.guestName || '' %>" required />
+                                             </div>
+                                             <div class="mb-3 col-md-6">
+                                                 <label for="guestPhone" class="form-label">Điện thoại *</label>
+                                                 <input name="guestPhone" id="guestPhone" type="tel" class="form-control" value="<%= oldData.guestPhone || '' %>" required />
+                                             </div>
+                                         </div>
+                                         <div class="row">
+                                              <div class="mb-3 col-md-6">
+                                                 <label for="guestEmail" class="form-label">Email</label>
+                                                 <input name="guestEmail" id="guestEmail" type="email" class="form-control" value="<%= oldData.guestEmail || '' %>" />
+                                             </div>
+                                             <div class="mb-3 col-md-6">
+                                                 <label for="guestCount" class="form-label">Số người *</label>
+                                                 <input name="guestCount" id="guestCountInput" type="number" class="form-control" value="<%= oldData.guestCount || '1' %>" min="1" required />
+                                             </div>
+                                         </div>
+                                         <hr>
+                                         <div class="row">
+                                             <div class="mb-3 col-md-6">
+                                                 <label for="checkInDate" class="form-label">Ngày nhận phòng *</label>
+                                                 <input name="checkInDate" id="checkInDate" type="datetime-local" class="form-control" value="<%= oldData.checkInDate || '' %>" required />
+                                             </div>
+                                             <div class="mb-3 col-md-6">
+                                                 <label for="checkOutDate" class="form-label">Ngày trả phòng *</label>
+                                                 <input name="checkOutDate" id="checkOutDate" type="datetime-local" class="form-control" value="<%= oldData.checkOutDate || '' %>" required />
+                                             </div>
+                                         </div>
+                                         <div class="mb-3">
+                                             <label for="roomId" class="form-label fw-bold">Chọn Phòng *</label>
+                                             <select name="roomId" id="roomId" class="form-select" required>
+                                                 <option value="" disabled <%= !(oldData && oldData.roomId) ? 'selected' : '' %>>-- Chọn phòng --</option>
+                                                  <% if (typeof rooms !== 'undefined' && rooms.length > 0) { %>
+                                                     <% rooms.forEach(room => { %>
+                                                         <option value="<%= room.id %>" data-capacity="<%= room.capacity %>" <%= (oldData && oldData.roomId == room.id) ? 'selected' : '' %>>
+                                                             <%= room.name %> - <%= room.type %> (<%= room.capacity %> người) - <%= room.price.toLocaleString('vi-VN') %>đ/đêm
+                                                         </option>
+                                                     <% }) %>
+                                                  <% } else { %>
+                                                       <option disabled>Không có phòng trống nào</option>
+                                                  <% } %>
+                                             </select>
+                                             <div id="capacityWarning" class="form-text text-danger d-none mt-1">Cảnh báo: Số người vượt quá sức chứa của phòng.</div>
+                                         </div>
+                                         <div class="mb-3">
+                                             <label for="specialRequest" class="form-label">Yêu cầu đặc biệt</label>
+                                             <textarea name="specialRequest" class="form-control" rows="3"><%= oldData.specialRequest || '' %></textarea>
+                                         </div>
+
+                                         <div class="mt-4 d-flex justify-content-end">
+                                             <a href="/admin/booking" class="btn btn-secondary me-2">Hủy bỏ</a>
+                                             <button type="submit" class="btn btn-success">
+                                                  <i class="fas fa-plus me-1"></i> Tạo Booking
+                                             </button>
+                                         </div>
+                                     </form>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <%- include('../layout/footer'); -%>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+    <script>
+        const now = new Date();
+        const todayLocal = new Date(now.getTime() - (now.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        const checkInElem = document.getElementById("checkInDate");
+        const checkOutElem = document.getElementById("checkOutDate");
+        if(checkInElem) checkInElem.min = todayLocal;
+        if(checkOutElem) checkOutElem.min = todayLocal;
+
+        if(checkInElem && checkOutElem) {
+             checkInElem.addEventListener('change', function() {
+                 const checkInValue = this.value;
+                 if (checkInValue) {
+                     checkOutElem.min = checkInValue;
+                     if (checkOutElem.value && new Date(checkOutElem.value) < new Date(checkInValue)) {
+                        checkOutElem.value = '';
+                     }
+                 } else {
+                      checkOutElem.min = todayLocal;
+                 }
+             });
+              if (checkInElem.value) {
+                checkOutElem.min = checkInElem.value;
+              }
+         }
+
+         document.getElementById('userId').addEventListener('change', function() {
+             const selectedOption = this.options[this.selectedIndex];
+             if (!selectedOption || !selectedOption.value) return;
+             try {
+                 document.getElementById('guestName').value = selectedOption.dataset.fullname || '';
+                 document.getElementById('guestEmail').value = selectedOption.dataset.email || '';
+             } catch (e) {
+                 console.error("Lỗi tự điền thông tin khách:", e);
+             }
+         });
+
+          const guestCountInput = document.getElementById('guestCountInput');
+          const roomSelect = document.getElementById('roomId');
+          const capacityWarning = document.getElementById('capacityWarning');
+
+          function checkCapacity() {
+               if(!guestCountInput || !roomSelect || !capacityWarning) return;
+               const selectedRoomOption = roomSelect.options[roomSelect.selectedIndex];
+               const roomCapacity = selectedRoomOption ? parseInt(selectedRoomOption.dataset.capacity || '0') : 0;
+               const guestCount = parseInt(guestCountInput.value || '1');
+               if (roomCapacity > 0 && guestCount > roomCapacity) {
+                    capacityWarning.classList.remove('d-none');
+               } else {
+                    capacityWarning.classList.add('d-none');
+               }
+          }
+          if(guestCountInput) guestCountInput.addEventListener('input', checkCapacity);
+          if(roomSelect) roomSelect.addEventListener('change', checkCapacity);
+          document.addEventListener('DOMContentLoaded', checkCapacity);
+    </script>
+</body>
+</html>

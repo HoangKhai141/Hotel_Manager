@@ -1,0 +1,35 @@
+<%- include('../layout/header') %>
+
+<main class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header text-center text-white" style="background-color: #a50064">
+          <h1 class="h4 mb-0">Mô phỏng thanh toán MoMo</h1>
+        </div>
+        <div class="card-body text-center p-4">
+          <div class="alert alert-warning" role="alert">
+            Đây là môi trường giả lập nội bộ. Không có giao dịch hay khoản tiền thật nào được tạo.
+          </div>
+          <p class="mb-2">Mã đặt phòng: <strong>#<%= payment.bookingId %></strong></p>
+          <p class="mb-4">Số tiền: <strong><%= Number(payment.totalAmount).toLocaleString('vi-VN') %> ₫</strong></p>
+
+          <form action="/payment/momo/mock" method="POST" class="d-flex flex-column gap-3">
+            <input type="hidden" name="paymentRef" value="<%= payment.paymentRef %>">
+            <button type="submit" name="result" value="success" class="btn btn-success btn-lg">
+              Giả lập thanh toán thành công
+            </button>
+            <button type="submit" name="result" value="failed" class="btn btn-outline-danger">
+              Giả lập thanh toán thất bại
+            </button>
+          </form>
+          <a href="/booking/success?id=<%= payment.bookingId %>" class="btn btn-link mt-3">
+            Quay lại, chưa thanh toán
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<%- include('../layout/footer') %>

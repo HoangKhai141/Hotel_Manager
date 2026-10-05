@@ -1,0 +1,390 @@
+<%- include('../layout/header'); -%>
+<%
+    const formatDateTimeLocal = (value) => {
+        if (!value) return '';
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return '';
+        const pad = (part) => String(part).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+%>
+
+<div class="container-fluid page-header mb-5 p-0" style="background-image: url(/client/img/carousel-1.jpg)">
+    <div class="container-fluid page-header-inner py-5">
+        <div class="container text-center pb-5">
+            <h1 class="display-3 text-white mb-3 animated slideInDown">Đặt Phòng</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center text-uppercase">
+                    <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page">Đặt phòng</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+<div class="container-xxl py-5 booking-page"> <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title text-center text-primary text-uppercase">Đặt Phòng</h6>
+            <h1 class="mb-5">Đặt Phòng <span class="text-primary text-uppercase">Ngay Hôm Nay</span></h1>
+        </div>
+
+        <div class="row g-4 align-items-start">
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="booking-visual">
+                    <img src="/client/img/room-2.jpg" alt="Không gian phòng nghỉ tại Hotelier" />
+                    <div class="booking-visual-caption">
+                        <span>KỲ NGHỈ CỦA BẠN</span>
+                        <h2>Bắt đầu từ một lựa chọn phù hợp.</h2>
+                        <p>Chọn ngày lưu trú và loại phòng để xem giá, sức chứa và tình trạng phòng.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-7">
+                <div class="booking-form-panel">
+                    <div id="messageArea" class="mb-3">
+                        <% if (typeof messages !== 'undefined' && messages && messages.length > 0) { %>
+                            <% messages.forEach(function(msg) { %>
+                                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <%- msg %>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                        <% if (typeof error !== 'undefined' && error) { %>
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <%= error %>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        <% } %>
+                    </div>
+                    <form id="bookingForm" action="/booking/submit" method="post">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="name" name="guestName" placeholder="Tên của bạn" value="<%= typeof oldData !== 'undefined' ? oldData.guestName : '' %>" required />
+                                    <label for="name">Tên khách *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="phone" name="guestPhone" placeholder="Điện thoại" value="<%= typeof oldData !== 'undefined' ? oldData.guestPhone : '' %>" required />
+                                    <label for="phone">Điện thoại *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="email" name="guestEmail" placeholder="Email" value="<%= typeof oldData !== 'undefined' ? oldData.guestEmail : '' %>"/>
+                                    <label for="email">Email</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="guestCount" name="guestCount" required >
+                                        <option value="" <%= (typeof oldData === 'undefined' || !oldData.guestCount) ? 'selected' : '' %> disabled>-- Chọn số người --</option>
+                                        <% for(let i = 1; i <= 6; i++) { %> <%# Ví dụ tối đa 6 người %>
+                                            <option value="<%= i %>" <%= (typeof oldData !== 'undefined' && oldData.guestCount == i) ? 'selected' : '' %>><%= i %> Người</option>
+                                        <% } %>
+                                    </select>
+                                    <label for="guestCount">Số người *</label>
+                                </div>
+                            </div>
+                             <div class="col-md-6">
+                                <div class="form-floating date" id="date3" data-target-input="nearest">
+                                    <input type="datetime-local" step="900" class="form-control" id="checkin" name="checkInDate" value="<%= formatDateTimeLocal(typeof oldData !== 'undefined' ? oldData.checkInDate : '') %>" required />
+                                    <label for="checkin">Ngày nhận phòng *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating date" id="date4" data-target-input="nearest">
+                                    <input type="datetime-local" step="900" class="form-control" id="checkout" name="checkOutDate" value="<%= formatDateTimeLocal(typeof oldData !== 'undefined' ? oldData.checkOutDate : '') %>" required />
+                                    <label for="checkout">Ngày trả phòng *</label>
+                                </div>
+                            </div>
+                             <div class="col-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="roomType" name="roomType" required onchange="updateAvailableRooms()">
+                                        <option value="" <%= (typeof oldData === 'undefined' || !oldData.roomType) ? 'selected' : '' %> disabled>-- Chọn loại phòng --</option>
+                                        <% if (typeof roomTypes !== 'undefined' && roomTypes.length > 0) { %>
+                                            <% roomTypes.forEach(function(type) { %>
+                                                <option value="<%= type %>" <%= (typeof oldData !== 'undefined' && oldData.roomType === type) ? 'selected' : '' %>><%= type %></option>
+                                            <% }); %>
+                                        <% } %>
+                                    </select>
+                                    <label for="roomType">Loại phòng *</label>
+                                </div>
+                            </div>
+                             <div class="col-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="roomSelect" name="roomId" required >
+                                        <option value="" selected disabled>-- Vui lòng chọn loại phòng và ngày trước --</option>
+                                        <% if (typeof oldData !== 'undefined' && oldData.roomId) { %>
+                                             <%# Logic để giữ lại phòng đã chọn nếu có lỗi (cần JS phức tạp hơn) %>
+                                             <%# Tạm thời để trống %>
+                                         <% } %>
+                                    </select>
+                                    <label for="roomSelect">Phòng cụ thể *</label>
+                                </div>
+                                <div id="roomAvailabilityMessage" class="form-text text-danger mt-1"></div> </div>
+                            <div class="col-12">
+                                <div class="alert alert-secondary py-3"> <div class="row">
+                                        <div class="col-sm-6 mb-2 mb-sm-0">
+                                            <strong>Giá/đêm:</strong>
+                                            <span id="pricePerNight" class="fw-bold">-</span> đ
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <strong>Số đêm:</strong> <span id="nights" class="fw-bold">-</span>
+                                        </div>
+                                    </div>
+                                    <hr class="my-2"/>
+                                    <div>
+                                        <strong>Tổng cộng:</strong>
+                                        <span id="totalPrice" style="font-size: 1.25rem; color: #dc3545;" class="fw-bold">-</span> đ
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" name="specialRequest" id="message" placeholder="Yêu cầu đặc biệt" style="height: 100px"><%= typeof oldData !== 'undefined' ? oldData.specialRequest : '' %></textarea>
+                                    <label for="message">Yêu cầu đặc biệt</label>
+                                </div>
+                            </div>
+                             <div class="col-12">
+                                <button class="btn btn-primary w-100 py-3" type="submit" id="submitBtn" disabled> Xác Nhận Đặt Phòng
+                                </button>
+                            </div>
+                        </div> </form>
+                </div> </div> </div> </div> </div>
+<%- include('../layout/footer'); -%>
+
+<script>
+    // Lấy các element cần thiết
+    const roomTypeSelect = document.getElementById("roomType");
+    const checkinInput = document.getElementById("checkin");
+    const checkoutInput = document.getElementById("checkout");
+    const roomSelect = document.getElementById("roomSelect");
+    const pricePerNightEl = document.getElementById("pricePerNight");
+    const nightsEl = document.getElementById("nights");
+    const totalPriceEl = document.getElementById("totalPrice");
+    const submitBtn = document.getElementById("submitBtn");
+    const roomAvailabilityMessage = document.getElementById("roomAvailabilityMessage");
+    const messageArea = document.getElementById("messageArea");
+
+    const formatLocalDateTime = (date) => {
+        const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return localDate.toISOString().slice(0, 16);
+    };
+
+    const syncDateConstraints = () => {
+        const now = new Date();
+        now.setSeconds(0, 0);
+        checkinInput.min = formatLocalDateTime(now);
+        checkoutInput.min = checkinInput.value || checkinInput.min;
+    };
+
+    syncDateConstraints();
+
+    // Hàm để fetch phòng trống và cập nhật select
+    async function updateAvailableRooms() {
+        const roomType = roomTypeSelect.value;
+        const checkInDate = checkinInput.value;
+        const checkOutDate = checkoutInput.value;
+
+        // Reset thông tin giá và disable nút submit
+        resetPriceInfo();
+        submitBtn.disabled = true;
+        roomAvailabilityMessage.textContent = ''; // Xóa thông báo lỗi cũ
+        roomSelect.innerHTML = '<option value="" selected disabled>-- Đang tải phòng... --</option>'; // Thông báo đang tải
+
+
+        // Chỉ fetch khi đủ thông tin
+        if (!roomType || !checkInDate || !checkOutDate) {
+             roomSelect.innerHTML = '<option value="" selected disabled>-- Vui lòng chọn loại phòng và ngày --</option>';
+            return;
+        }
+
+        try {
+            const response = await fetch("/booking/available-rooms", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ roomType, checkInDate, checkOutDate }),
+            });
+
+            const data = await response.json();
+
+            // Xóa thông báo loading
+            roomSelect.innerHTML = '<option value="" selected disabled>-- Chọn phòng --</option>';
+
+            if (data.success) {
+                if (data.rooms.length === 0) {
+                    roomSelect.innerHTML += '<option disabled>Không còn phòng trống loại này</option>';
+                    roomAvailabilityMessage.textContent = 'Không còn phòng trống loại này trong khoảng ngày đã chọn.';
+                } else {
+                    data.rooms.forEach((room) => {
+                        const option = document.createElement("option");
+                        option.value = room.id;
+                        // Hiển thị thêm sức chứa nếu cần
+                        option.textContent = `${room.name} (${room.capacity} người) - ${room.price.toLocaleString("vi-VN")} đ/đêm`;
+                        option.dataset.price = room.price; // Lưu giá vào data attribute
+                        option.dataset.capacity = room.capacity; // Lưu sức chứa
+                        roomSelect.appendChild(option);
+                    });
+                     // Kích hoạt lại select và nút submit nếu có phòng
+                     roomSelect.disabled = false;
+                }
+            } else {
+                 // Hiển thị lỗi từ server nếu có
+                 roomAvailabilityMessage.textContent = data.message || "Lỗi khi tìm phòng.";
+                 roomSelect.innerHTML += '<option disabled>Lỗi khi tải phòng</option>';
+                 showTemporaryMessage('danger', data.message || "Lỗi khi tìm phòng."); // Hiển thị lỗi ở message area
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+             roomAvailabilityMessage.textContent = "Lỗi kết nối đến server.";
+             roomSelect.innerHTML = '<option value="" selected disabled>-- Lỗi tải phòng --</option>';
+             showTemporaryMessage('danger', "Lỗi kết nối đến server khi tìm phòng."); // Hiển thị lỗi ở message area
+        } finally {
+            // Cập nhật lại giá (có thể sẽ là '-') nếu không chọn được phòng
+            updateTotalPrice();
+        }
+    }
+
+    // Hàm reset thông tin giá
+    function resetPriceInfo() {
+        pricePerNightEl.textContent = "-";
+        nightsEl.textContent = "-";
+        totalPriceEl.textContent = "-";
+         submitBtn.disabled = true; // Disable nút submit khi giá chưa tính được
+    }
+
+    // Hàm tính và cập nhật tổng giá
+    function updateTotalPrice() {
+        const checkInValue = checkinInput.value;
+        const checkOutValue = checkoutInput.value;
+        const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+
+        // Reset nếu chưa chọn đủ thông tin
+        if (!checkInValue || !checkOutValue || !selectedOption || !selectedOption.value || !selectedOption.dataset.price) {
+            resetPriceInfo();
+            return;
+        }
+
+        try {
+            const checkInDate = new Date(checkInValue);
+            const checkOutDate = new Date(checkOutValue);
+            const price = parseInt(selectedOption.dataset.price);
+
+            // Kiểm tra ngày hợp lệ
+             if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime()) || checkOutDate <= checkInDate) {
+                 resetPriceInfo();
+                 roomAvailabilityMessage.textContent = 'Ngày nhận/trả phòng không hợp lệ.';
+                 return;
+             } else {
+                 roomAvailabilityMessage.textContent = ''; // Xóa lỗi nếu ngày hợp lệ
+             }
+
+
+            const nights = Math.ceil(
+                (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)
+            );
+
+            if (nights <= 0) {
+                 resetPriceInfo();
+                 roomAvailabilityMessage.textContent = 'Số đêm phải lớn hơn 0.';
+                return;
+            }
+
+            const total = price * nights;
+
+            pricePerNightEl.textContent = price.toLocaleString("vi-VN");
+            nightsEl.textContent = nights;
+            totalPriceEl.textContent = total.toLocaleString("vi-VN");
+            submitBtn.disabled = false; // Enable nút submit khi đã tính được giá
+        } catch (e) {
+            console.error("Error calculating price:", e);
+            resetPriceInfo();
+             roomAvailabilityMessage.textContent = 'Lỗi khi tính giá.';
+        }
+    }
+
+     // Hàm hiển thị thông báo tạm thời
+     function showTemporaryMessage(type, message) {
+         const alertDiv = document.createElement('div');
+         alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+         alertDiv.setAttribute('role', 'alert');
+         alertDiv.innerHTML = `
+             ${message}
+             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         `;
+         messageArea.appendChild(alertDiv);
+         // Tự động xóa sau 5 giây
+         setTimeout(() => {
+             alertDiv.classList.remove('show');
+             setTimeout(() => alertDiv.remove(), 150); // Chờ hiệu ứng fade out
+         }, 5000);
+     }
+
+
+    // Thêm Event Listeners
+    // Khi loại phòng thay đổi -> cập nhật danh sách phòng
+    roomTypeSelect.addEventListener("change", updateAvailableRooms);
+    // Khi ngày thay đổi -> cũng cập nhật lại danh sách phòng VÀ giá
+    checkinInput.addEventListener("change", () => {
+        syncDateConstraints();
+        updateAvailableRooms(); // Gọi lại để lấy phòng theo ngày mới
+        // updateTotalPrice sẽ được gọi trong updateAvailableRooms' finally block
+    });
+    checkoutInput.addEventListener("change", () => {
+         updateAvailableRooms(); // Gọi lại để lấy phòng theo ngày mới
+         // updateTotalPrice sẽ được gọi trong updateAvailableRooms' finally block
+    });
+     // Khi phòng cụ thể thay đổi -> chỉ cập nhật giá
+    roomSelect.addEventListener("change", updateTotalPrice);
+
+     // Khôi phục giá trị cũ và trigger update khi trang load (nếu có lỗi trước đó)
+   document.addEventListener('DOMContentLoaded', () => {
+        let initialOldData = null; // Khởi tạo là null
+
+        // 1. Dùng EJS để tạo ra một CHUỖI JSON (hoặc chuỗi 'null')
+        const oldDataJsonString = `<%-
+            (typeof error !== 'undefined' && error && typeof oldData !== 'undefined')
+            ? JSON.stringify(oldData)
+            : 'null'
+        %>`;
+
+        // 2. Dùng JSON.parse để chuyển chuỗi thành đối tượng JS
+        try {
+            initialOldData = JSON.parse(oldDataJsonString);
+            // console.log("Parsed initialOldData:", initialOldData); // Bỏ comment để debug nếu cần
+        } catch (e) {
+            console.error("Lỗi parse JSON oldData:", e, "Chuỗi gốc:", oldDataJsonString);
+            initialOldData = null; // Gán lại là null nếu parse lỗi
+        }
+
+        // 3. Sử dụng biến initialOldData đã được parse
+        if (initialOldData && initialOldData.roomType && initialOldData.checkInDate && initialOldData.checkOutDate) {
+            console.log("Khôi phục form từ:", initialOldData);
+
+            updateAvailableRooms().then(() => {
+                if (initialOldData.roomId) {
+                    const oldRoomIdValue = initialOldData.roomId;
+                    const roomOption = roomSelect.querySelector(`option[value="${oldRoomIdValue}"]`);
+                    if (roomOption) {
+                        console.log("Tìm thấy phòng cũ, chọn:", oldRoomIdValue);
+                        roomSelect.value = oldRoomIdValue;
+                        updateTotalPrice();
+                    } else {
+                        console.warn("Không tìm thấy option phòng cũ:", oldRoomIdValue);
+                    }
+                } else {
+                     console.log("Không có oldData.roomId để chọn lại.");
+                }
+            }).catch(err => {
+                 console.error("Lỗi khi updateAvailableRooms lúc khôi phục form:", err);
+            });
+        } else {
+             console.log("Không có lỗi hoặc dữ liệu cũ hợp lệ để khôi phục form.");
+        }
+    });
+
+</script>

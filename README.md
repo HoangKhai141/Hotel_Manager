@@ -132,6 +132,3 @@ src/
 ```
 
 ---
-💡 *Dự án được xây dựng và phát triển bởi [HaNguyen051](https://github.com/HaNguyen051).*
-#   H o t e l _ M a n a g e r  
- 

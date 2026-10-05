@@ -1,0 +1,226 @@
+<%- include('../layout/header'); -%>
+
+<div
+  class="container-fluid page-header mb-5 p-0"
+  style="background-image: url(/client/img/carousel-1.jpg)"
+>
+  <div class="container-fluid page-header-inner py-5">
+    <div class="container text-center pb-5">
+      <h1 class="display-3 text-white mb-3 animated slideInDown">
+        Thông Tin Tài Khoản
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center text-uppercase">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item text-white active" aria-current="page">
+            Tài khoản
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="row g-5 justify-content-center">
+      <div class="col-lg-8 wow fadeInUp profile-panel" data-wow-delay="0.1s">
+        <div id="messageArea" class="mb-4">
+          <% if (success_msg && success_msg.length > 0) { %>
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <%- success_msg[0] %> <%# Flash returns an array %>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          <% } %> <% if (error_msg && error_msg.length > 0) { %>
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <%- error_msg[0] %> <%# Flash returns an array %>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          <% } %>
+        </div>
+        <h4 class="mb-4">
+          <i class="fas fa-user-edit me-2 text-primary"></i>Cập nhật thông tin
+          cá nhân
+        </h4>
+        <% if (typeof user !== 'undefined' && user) { %> <%# Check if user
+        object exists %>
+        <form action="/profile" method="post" enctype="multipart/form-data">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input
+                  value="<%= user.fullName || '' %>"
+                  name="fullName"
+                  type="text"
+                  class="form-control"
+                  id="fullName"
+                  placeholder="Họ và Tên"
+                />
+                <label for="fullName">Họ và Tên</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input
+                  disabled
+                  readonly
+                  value="<%= user.username %>"
+                  type="email"
+                  class="form-control bg-light"
+                  id="email"
+                  placeholder="Email"
+                />
+                <label for="email">Email (Không thể thay đổi)</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input
+                  value="<%= user.phone || '' %>"
+                  type="tel"
+                  class="form-control"
+                  id="phone"
+                  name="phone"
+                  placeholder="Số điện thoại"
+                />
+                <label for="phone">Số điện thoại</label>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="form-floating">
+                <input
+                  value="<%= user.address || '' %>"
+                  name="address"
+                  class="form-control"
+                  placeholder="Địa chỉ"
+                  id="address"
+                />
+                <label for="address">Địa chỉ</label>
+              </div>
+            </div>
+
+            <div class="col-12 mt-3">
+              <label for="avatarFile" class="form-label fw-bold"
+                >Ảnh đại diện mới (Tùy chọn)</label
+              >
+              <input
+                name="avatar"
+                class="form-control"
+                type="file"
+                id="avatarFile"
+                accept=".png, .jpg, .jpeg"
+              />
+              <small class="form-text text-muted"
+                >Chọn ảnh mới để thay đổi. Để trống nếu không muốn thay
+                đổi.</small
+              >
+            </div>
+
+            <div class="col-12 mt-3 text-center text-md-start">
+              <label class="form-label d-block">Ảnh hiện tại:</label>
+              <% if (user.avatar) { %>
+              <img
+                class="profile-avatar"
+                style="display: inline-block;"
+                alt="avatar preview"
+                id="avatarPreview"
+                src="/images/avatar/<%=user.avatar%>"
+              />
+              <div
+                id="avatarPlaceholder"
+                class="profile-avatar-placeholder"
+                style="display: none;"
+              >
+                <i class="fas fa-user fa-3x text-secondary"></i>
+              </div>
+              <% } else { %>
+              <div
+                id="avatarPlaceholder"
+                class="profile-avatar-placeholder"
+                style="display: inline-flex;"
+              >
+                <i class="fas fa-user fa-3x text-secondary"></i>
+              </div>
+              <img
+                class="profile-avatar"
+                style="display: none;"
+                alt="avatar preview"
+                id="avatarPreview"
+              />
+              <% } %>
+            </div>
+
+            <div class="col-12 mt-4">
+              <button type="submit" class="btn btn-primary w-100 py-3">
+                <i class="fas fa-save me-2"></i>Lưu Thay Đổi
+              </button>
+            </div>
+          </div>
+        </form>
+        <% } else { %>
+        <div class="alert alert-warning">
+          Không thể tải thông tin người dùng. Vui lòng thử đăng nhập lại.
+        </div>
+        <% } %> <%# End check if user exists %>
+
+        <div class="text-center mt-4 pt-3 border-top">
+          <a href="/my-bookings" class="btn btn-outline-secondary">
+            <i class="fas fa-history me-1"></i> Xem Lịch Sử Đặt Phòng
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../layout/footer'); -%>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+  $(document).ready(() => {
+    const avatarFile = $("#avatarFile");
+    const avatarPreview = $("#avatarPreview");
+    const avatarPlaceholder = $("#avatarPlaceholder");
+    const initialSrc = avatarPreview.attr("src");
+    const hasInitialAvatar =
+      !!initialSrc && avatarPreview.css("display") !== "none";
+
+    avatarFile.change(function (e) {
+      if (e.target.files && e.target.files[0]) {
+        const imgURL = URL.createObjectURL(e.target.files[0]);
+        avatarPreview.attr("src", imgURL);
+        avatarPreview.css({ display: "inline-block" }); // Show preview
+        if (avatarPlaceholder) avatarPlaceholder.css({ display: "none" }); // Hide placeholder
+      } else {
+        // User cancelled file selection
+        if (hasInitialAvatar) {
+          avatarPreview.attr("src", initialSrc); // Revert to old image
+          avatarPreview.css({ display: "inline-block" });
+          if (avatarPlaceholder) avatarPlaceholder.css({ display: "none" });
+        } else {
+          avatarPreview.css({ display: "none" }); // Hide preview img tag
+          avatarPreview.attr("src", ""); // Clear src
+          if (avatarPlaceholder)
+            avatarPlaceholder.css({ display: "inline-flex" }); // Show placeholder
+        }
+      }
+    });
+  });
+</script>

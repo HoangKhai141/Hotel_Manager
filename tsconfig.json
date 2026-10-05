@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",//dich code js
+    "esModuleInterop": true,
+    "target": "es6",//version js 
+    "sourceMap": true,//debug tren ts, code chay trem js lien ket voi nhau
+    "skipLibCheck": true,//
+    "outDir": "dist",//built //dau ra luu nhu the nao
+    "rootDir": "src" , //phuc vu qua trinh tu ts sang js trong file , thu muc nao
+    //"baseUrl": "." ,  //phuc vu viec dinh nghia duong dan cua file xuat phat tu dau 
+    "paths": {
+        "src/*": ["./src/*"],
+      "config/*": ["./src/config/*"],
+      "controllers/*": ["./src/controllers/*"],
+      "models/*": ["./src/models/*"],
+      "routes/*": ["./src/routes/*"],
+      "services/*": ["./src/services/*"],
+    } , 
+    
+
+  }
+}

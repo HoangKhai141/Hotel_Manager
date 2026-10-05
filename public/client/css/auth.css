@@ -1,0 +1,132 @@
+:root {
+  --auth-primary: #fea116;
+  --auth-dark: #0f172b;
+}
+
+body#auth-body.auth-page {
+  min-height: 100vh;
+  background-color: var(--auth-dark);
+  background-image: linear-gradient(rgba(15, 23, 43, .68), rgba(15, 23, 43, .76)), url('/client/img/carousel-1.jpg');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  font-family: 'Heebo', sans-serif;
+}
+
+body#auth-body.auth-page::before {
+  display: none;
+}
+
+#layoutAuthentication,
+#layoutAuthentication_content,
+#layoutAuthentication_content main {
+  min-height: 100vh;
+}
+
+#layoutAuthentication_content main {
+  display: flex;
+  align-items: center;
+  padding: 36px 0;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 470px;
+  margin: 0 auto !important;
+  overflow: hidden;
+  border-radius: 6px !important;
+  background: #fff;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, .24) !important;
+}
+
+.auth-card-register {
+  max-width: 680px;
+}
+
+.auth-card .card-header {
+  padding: 28px 32px 8px;
+  border: 0;
+  background: #fff;
+}
+
+.auth-card .card-header h3 {
+  color: var(--auth-dark);
+  font-weight: 700;
+}
+
+.auth-card .card-header .fa-hotel {
+  color: var(--auth-primary) !important;
+}
+
+.auth-card .card-body {
+  padding: 12px 32px 28px;
+}
+
+.auth-card .card-footer {
+  padding: 18px 24px;
+  border-top: 1px solid #e8edf2;
+  background: #f7f9fb;
+}
+
+.auth-page .input-group-text {
+  width: 52px;
+  justify-content: center;
+  border-color: #d8dee5;
+  border-radius: 4px 0 0 4px;
+  background: #fff;
+  color: var(--auth-primary);
+}
+
+.auth-page .input-group .form-floating {
+  min-width: 0;
+}
+
+.auth-page .input-group .form-control {
+  min-height: 58px;
+  border-color: #d8dee5;
+  border-radius: 0 4px 4px 0;
+}
+
+.auth-page .input-group:focus-within .input-group-text,
+.auth-page .input-group:focus-within .form-control {
+  border-color: var(--auth-primary);
+}
+
+.auth-page .btn {
+  min-height: 50px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.auth-page .btn-primary {
+  border-color: var(--auth-primary);
+  background: var(--auth-primary);
+}
+
+.auth-page .btn-primary:hover {
+  border-color: #dc8b0d;
+  background: #dc8b0d;
+}
+
+.auth-page .card-footer a {
+  color: #9a5b00;
+  text-decoration: none;
+}
+
+.auth-page .card-footer a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 575.98px) {
+  #layoutAuthentication_content main {
+    padding: 20px 0;
+  }
+
+  .auth-card .card-header {
+    padding: 22px 22px 6px;
+  }
+
+  .auth-card .card-body {
+    padding: 10px 22px 22px;
+  }
+}

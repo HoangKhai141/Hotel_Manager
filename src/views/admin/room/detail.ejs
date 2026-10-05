@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Hotel Manager - Room Detail" />
+    <meta name="author" content="Hotel Manager" />
+    <title>Room Detail - Hotel Manager</title>
+    <link href="/admin/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(() => {
+            const imageFile = $("#imageFile");
+            imageFile.change(function (e) {
+                const imgURL = URL.createObjectURL(e.target.files[0]);
+                $("#imagePreview").attr("src", imgURL);
+                $("#imagePreview").css({ display: "block" });
+            });
+        });
+    </script>
+</head>
+
+<body class="sb-nav-fixed">
+    <%- include('../layout/header'); -%>
+
+    <div id="layoutSidenav">
+        <%- include('../layout/sidenav'); -%>
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    <h1 class="mt-4">Manage Rooms</h1>
+                    <ol class="breadcrumb mb-4">
+                        <li class="breadcrumb-item"><a href="/admin">Dashboard</a></li>
+                        <li class="breadcrumb-item active"><a href="/admin/room">Rooms</a></li>
+                    </ol>
+                    <div class="row">
+                        <div class="col-6 mx-auto">
+                            <div>
+                                <h5 style="padding: 10px 0">Edit room:</h5>
+                                <% if (typeof error !== 'undefined') { %>
+                                    <div class="alert alert-danger"><%= error %></div>
+                                <% } %>
+                                <form action="/admin/update-room" method="post" enctype="multipart/form-data">
+                                    <input value="<%= room.id %>" name="id" type="text" style="display: none;">
+                                    <div class="mb-3">
+                                        <label class="form-label">Room Name:</label>
+                                        <input value="<%= room.name %>" name="name" type="text" class="form-control" placeholder="Room name" required />
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Room Type:</label>
+                                        <select name="type" class="form-select" required>
+                                            <option value="Single" <%= room.type === 'Single' ? 'selected' : '' %>>Single</option>
+                                            <option value="Double" <%= room.type === 'Double' ? 'selected' : '' %>>Double</option>
+                                            <option value="Suite" <%= room.type === 'Suite' ? 'selected' : '' %>>Suite</option>
+                                            <option value="Deluxe" <%= room.type === 'Deluxe' ? 'selected' : '' %>>Deluxe</option>
+                                        </select>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-6">
+                                            <label class="form-label">Price (VND)</label>
+                                            <input value="<%= room.price %>" name="price" type="number" class="form-control" placeholder="Price" required />
+                                        </div>
+                                        <div class="mb-3 col-6">
+                                            <label class="form-label">Capacity (persons)</label>
+                                            <input value="<%= room.capacity %>" name="capacity" type="number" class="form-control" placeholder="Capacity" required />
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Status:</label>
+                                        <select name="status" class="form-select" required>
+                                            <option value="AVAILABLE" <%= room.status === 'AVAILABLE' ? 'selected' : '' %>>AVAILABLE</option>
+                                            <option value="BOOKED" <%= room.status === 'BOOKED' ? 'selected' : '' %>>BOOKED</option>
+                                            <option value="MAINTENANCE" <%= room.status === 'MAINTENANCE' ? 'selected' : '' %>>MAINTENANCE</option>
+                                            <option value="CLEANING" <%= room.status === 'CLEANING' ? 'selected' : '' %>>CLEANING</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="formFile" class="form-label">Room Image</label>
+                                        <input name="image" class="form-control" type="file" id="imageFile" accept=".png, .jpg, .jpeg" />
+                                    </div>
+                                    <% if (room.image) { %>
+                                        <img style="max-height: 250px; display: block;" alt="image preview" id="imagePreview" src="<%= roomImageUrl(room.image) %>" />
+                                    <% } else { %>
+                                        <img style="max-height: 250px; display: none;" alt="image preview" id="imagePreview" />
+                                    <% } %>
+                                    <div class="mb-3">
+                                        <label class="form-label">Description:</label>
+                                        <textarea name="description" class="form-control" rows="3"><%= room.description || '' %></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button type="submit" class="btn btn-warning">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <%- include('../layout/footer'); -%>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="/admin/js/scripts.js"></script>
+</body>
+</html>

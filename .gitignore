@@ -1,0 +1,5 @@
+node_modules
+dist/
+# Keep environment variables out of version control
+.env
+client_secret_978979303772-utauqleu21busjops1ca065t33rlc45e.apps.googleusercontent.com.json

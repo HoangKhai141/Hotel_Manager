@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.MediumText
+  expiresAt DateTime
+}
+
+model User {
+  id          Int     @id @default(autoincrement())
+  username    String  @unique @db.VarChar(255)
+  password    String? @db.VarChar(255)
+  googleId    String? @unique @db.VarChar(255) // THÊM TRƯỜNG NÀY
+  fullName    String? @db.VarChar(255)
+  phone       String? @db.VarChar(20)
+  address     String? @db.VarChar(500)
+  avatar      String? @db.VarChar(255)
+  accountType String  @db.VarChar(50)
+
+  role   Role @relation(fields: [roleId], references: [id])
+  roleId Int
+
+  bookings        Booking[]
+  payments        Payment[]
+  bookingServices BookingService[]
+
+  @@map("users")
+}
+
+model Role {
+  id          Int    @id @default(autoincrement())
+  name        String @unique @db.VarChar(100)
+  description String @db.VarChar(255)
+
+  users User[]
+
+  @@map("roles")
+}
+
+model Room {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique @db.VarChar(255)
+  type        String     @db.VarChar(100)
+  price       Int
+  status      RoomStatus @default(AVAILABLE)
+  image       String?    @db.VarChar(255)
+  description String?    @db.MediumText
+  capacity    Int        @default(2)
+
+  roomBookings RoomBooking[]
+  Booking      Booking[]
+
+  @@map("rooms")
+}
+
+model Booking {
+  id             Int           @id @default(autoincrement())
+  totalPrice     Int
+  checkInDate    DateTime
+  checkOutDate   DateTime
+  status         BookingStatus @default(PENDING)
+  guestName      String        @db.VarChar(255)
+  guestPhone     String        @db.VarChar(20)
+  guestEmail     String?       @db.VarChar(255)
+  guestCount     Int           @default(1)
+  specialRequest String?       @db.MediumText
+  createdAt      DateTime      @default(now())
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  payment Payment?
+
+  bookingServices BookingService[]
+  roomBookings    RoomBooking[]
+  Room            Room?            @relation(fields: [roomId], references: [id])
+  roomId          Int?
+
+  @@map("bookings")
+}
+
+model RoomBooking {
+  id       Int @id @default(autoincrement())
+  price    Int
+  quantity Int // Số đêm ở
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  bookingId Int
+
+  room   Room @relation(fields: [roomId], references: [id])
+  roomId Int
+
+  @@unique([bookingId, roomId]) // Một booking chỉ book 1 room
+  @@map("room_booking")
+}
+
+model BookingService {
+  id       Int @id @default(autoincrement())
+  price    Int
+  quantity Int
+
+  booking   Booking @relation(fields: [bookingId], references: [id])
+  bookingId Int
+
+  service   Service @relation(fields: [serviceId], references: [id])
+  serviceId Int
+  User      User?   @relation(fields: [userId], references: [id])
+  userId    Int?
+
+  @@map("booking_service")
+}
+
+model Service {
+  id          Int     @id @default(autoincrement())
+  name        String  @db.VarChar(255)
+  price       Int
+  description String? @db.MediumText
+  shortDesc   String? @db.VarChar(255)
+  image       String? @db.VarChar(255)
+  isActive    Boolean @default(true)
+
+  bookingServices BookingService[]
+
+  @@map("services")
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  bookingId     Int           @unique
+  totalAmount   Int
+  paymentMethod PaymentMethod
+  paymentStatus PaymentStatus @default(PENDING)
+  paymentRef    String?
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  Int?
+
+  @@map("payments")
+}
+
+enum RoomStatus {
+  AVAILABLE
+  BOOKED
+  MAINTENANCE
+  CLEANING
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CARD
+  BANK_TRANSFER
+  MOBILE_PAYMENT
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}

@@ -1,0 +1,181 @@
+<%- include('../layout/header'); -%>
+<%
+  const bookingStatusMap = {
+    PENDING: { label: 'Chờ xác nhận', className: 'bg-warning text-dark' },
+    CONFIRMED: { label: 'Đã xác nhận', className: 'bg-success' },
+    CHECKED_IN: { label: 'Đang lưu trú', className: 'bg-primary' },
+    CHECKED_OUT: { label: 'Đã trả phòng', className: 'bg-secondary' },
+    CANCELLED: { label: 'Đã hủy', className: 'bg-danger' }
+  };
+  const paymentStatusMap = {
+    PENDING: { label: 'Chờ thanh toán', className: 'bg-warning text-dark' },
+    SUCCESS: { label: 'Đã thanh toán', className: 'bg-success' },
+    FAILED: { label: 'Thất bại', className: 'bg-danger' },
+    REFUNDED: { label: 'Đã hoàn tiền', className: 'bg-secondary' }
+  };
+%>
+
+<div
+  class="container-fluid page-header mb-5 p-0"
+  style="background-image: url(/client/img/carousel-1.jpg)"
+>
+  <div class="container-fluid page-header-inner py-5">
+    <div class="container text-center pb-5">
+      <h1 class="display-3 text-white mb-3 animated slideInDown">
+        Lịch Sử Đặt Phòng
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center text-uppercase">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/profile">Tài khoản</a></li>
+          <li class="breadcrumb-item text-white active" aria-current="page">
+            Lịch sử đặt phòng
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+      <h6 class="section-title text-center text-primary text-uppercase">
+        Tài Khoản Của Tôi
+      </h6>
+      <h1 class="mb-5">
+        Lịch Sử <span class="text-primary text-uppercase">Đặt Phòng</span>
+      </h1>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+      <div class="col-lg-10 wow fadeInUp" data-wow-delay="0.3s">
+        <div id="messageArea" class="mb-3">
+          <% if (success_msg && success_msg.length > 0) { %>
+          <div
+            class="alert alert-success alert-dismissible fade show"
+            role="alert"
+          >
+            <%- success_msg[0] %>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          <% } %> <% if (error_msg && error_msg.length > 0) { %>
+          <div
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            <%- error_msg[0] %>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="alert"
+              aria-label="Close"
+            ></button>
+          </div>
+          <% } %>
+        </div>
+        <% if (typeof bookings !== 'undefined' && bookings.length > 0) { %>
+        <div class="table-responsive booking-history-table">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" class="text-center">Mã ĐP</th>
+                <th scope="col">Phòng</th>
+                <th scope="col">Ngày Nhận</th>
+                <th scope="col">Ngày Trả</th>
+                <th scope="col" class="text-end">Tổng Tiền</th>
+                <th scope="col" class="text-center">Trạng Thái ĐP</th>
+                <th scope="col" class="text-center">Thanh Toán</th>
+                <th scope="col">Ngày Đặt</th>
+                <th scope="col" class="text-center">Hủy Đặt</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% bookings.forEach(function(booking) { %>
+              <% const bookingStatus = bookingStatusMap[booking.status] || { label: booking.status, className: 'bg-secondary' }; %>
+              <tr>
+                <td class="text-center"><strong>#<%= booking.id %></strong></td>
+                <td>
+                  <% if (booking.roomBookings && booking.roomBookings.length > 0
+                  && booking.roomBookings[0].room) { %> <%=
+                  booking.roomBookings[0].room.name %>
+                  <small class="d-block text-muted"
+                    >(<%= booking.roomBookings[0].room.type %>)</small
+                  >
+                  <% } else { %>
+                  <span class="text-muted">N/A</span>
+                  <% } %>
+                </td>
+                <td>
+                  <%= new Date(booking.checkInDate).toLocaleDateString('vi-VN')
+                  %>
+                </td>
+                <td>
+                  <%= new Date(booking.checkOutDate).toLocaleDateString('vi-VN')
+                  %>
+                </td>
+                <td class="text-end">
+                  <%= booking.totalPrice ?
+                  booking.totalPrice.toLocaleString('vi-VN') + 'đ' : 'N/A' %>
+                </td>
+                <td class="text-center"><span class="badge <%= bookingStatus.className %>"><%= bookingStatus.label %></span></td>
+                <td class="text-center">
+                  <% if (booking.payment) { %>
+                    <% const paymentStatus = paymentStatusMap[booking.payment.paymentStatus] || { label: booking.payment.paymentStatus, className: 'bg-secondary' }; %>
+                    <span class="badge <%= paymentStatus.className %>"><%= paymentStatus.label %></span>
+                  <% } else { %>
+                  <span class="text-muted">Chưa tạo</span>
+                  <% } %>
+                </td>
+                <td>
+                  <small
+                    ><%= new Date(booking.createdAt).toLocaleDateString('vi-VN')
+                    %></small
+                  >
+                </td>
+                <td class="text-center">
+                  <% if (booking.status === 'PENDING') { %>
+                  <form
+                    action="/my-bookings/<%= booking.id %>/cancel"
+                    method="POST"
+                    onsubmit="return confirm('Bạn có chắc chắn muốn hủy đặt phòng này?');"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-sm btn-danger"
+                      title="Hủy đặt phòng"
+                    >
+                      <i class="fas fa-times"></i> Hủy
+                    </button>
+                  </form>
+                  <% } else { %>
+                  <span class="text-muted">-</span>
+                  <% } %>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+        <% } else { %>
+        <div class="alert alert-warning text-center shadow-sm" role="alert">
+          <i class="fas fa-info-circle me-2"></i>Bạn chưa có lịch sử đặt phòng
+          nào.
+          <a href="/booking" class="alert-link ms-2">Đặt phòng ngay!</a>
+        </div>
+        <% } %>
+
+        <div class="text-center mt-4">
+          <a href="/profile" class="btn btn-outline-secondary"
+            ><i class="fas fa-arrow-left me-1"></i> Quay lại trang tài khoản</a
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../layout/footer'); -%>

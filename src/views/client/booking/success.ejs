@@ -1,0 +1,239 @@
+<%- include('../layout/header'); -%>
+
+<div
+  class="container-fluid page-header mb-5 p-0"
+  style="background-image: url(/client/img/carousel-2.jpg)"
+>
+  <div class="container-fluid page-header-inner py-5">
+    <div class="container text-center pb-5">
+      <h1 class="display-3 text-white mb-3 animated slideInDown">
+        Đặt Phòng Thành Công
+      </h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb justify-content-center text-uppercase">
+          <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+          <li class="breadcrumb-item"><a href="/booking">Đặt phòng</a></li>
+          <li class="breadcrumb-item text-white active" aria-current="page">
+            Thành công
+          </li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+</div>
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="row g-5 justify-content-center">
+      <div class="col-lg-8">
+        <div class="wow fadeInUp" data-wow-delay="0.2s">
+          <div class="alert alert-success text-center shadow-sm" role="alert">
+            <h4 class="alert-heading mb-3">
+              <i class="fas fa-check-circle fa-2x text-success mb-2"></i><br />
+              Đặt phòng thành công!
+            </h4>
+            <% if (typeof booking !== 'undefined' && booking) { %>
+            <p>
+              Cảm ơn bạn đã đặt phòng tại Hotelier. Mã đặt phòng của bạn là:
+              <strong class="fs-5 text-dark">#<%= booking.id %></strong>
+            </p>
+            <p class="mb-0 text-muted">
+              Chúng tôi sẽ liên hệ qua số điện thoại
+              <strong><%= booking.guestPhone %></strong> để xác nhận.
+            </p>
+            <% } else { %>
+            <p>Đã ghi nhận yêu cầu đặt phòng của bạn. Vui lòng chờ xác nhận.</p>
+            <% } %>
+          </div>
+
+          <% if (typeof booking !== 'undefined' && booking) { %>
+
+          <div class="card shadow-sm mt-4 border-0">
+            <div class="card-header bg-primary text-white">
+              <h5 class="mb-0 text-white">
+                <i class="fas fa-receipt me-2"></i>Thông Tin Đặt Phòng
+              </h5>
+            </div>
+            <div class="card-body bg-white">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <h6 class="text-primary border-bottom pb-2 mb-3">
+                    Thông Tin Khách
+                  </h6>
+                  <p class="mb-1">
+                    <strong>Tên:</strong> <%= booking.guestName %>
+                  </p>
+                  <p class="mb-1">
+                    <strong>SĐT:</strong> <%= booking.guestPhone %>
+                  </p>
+                  <p class="mb-1">
+                    <strong>Email:</strong> <%= booking.guestEmail ?
+                    booking.guestEmail : 'Chưa cung cấp' %>
+                  </p>
+                  <p class="mb-0">
+                    <strong>Số khách:</strong> <%= booking.guestCount %>
+                  </p>
+                </div>
+
+                <div class="col-md-6">
+                  <h6 class="text-primary border-bottom pb-2 mb-3">
+                    Chi Tiết Lưu Trú
+                  </h6>
+                  <p class="mb-1">
+                    <strong>Nhận phòng:</strong> <%= new
+                    Date(booking.checkInDate).toLocaleDateString('vi-VN') %>
+                  </p>
+                  <p class="mb-1">
+                    <strong>Trả phòng:</strong> <%= new
+                    Date(booking.checkOutDate).toLocaleDateString('vi-VN') %>
+                  </p>
+                  <p class="mb-0">
+                    <strong>Số đêm:</strong> <%= (typeof nights !== 'undefined')
+                    ? nights : 'N/A' %>
+                  </p>
+                </div>
+
+                <div class="col-12"><hr class="text-muted" /></div>
+
+                <div class="col-12">
+                  <h6 class="text-primary mb-2">Thông Tin Phòng</h6>
+                  <% if (booking.roomBookings && booking.roomBookings.length >
+                  0) { %> <% booking.roomBookings.forEach(function(rb) { %> <%
+                  if (rb && rb.room) { %>
+                  <div
+                    class="d-flex justify-content-between align-items-center mb-2"
+                  >
+                    <span>
+                      <strong><%= rb.room.name %></strong>
+                      <span class="badge bg-secondary ms-2"
+                        ><%= rb.room.type %></span
+                      >
+                    </span>
+                    <span
+                      ><%= rb.room.price ? rb.room.price.toLocaleString('vi-VN')
+                      : '0' %> đ/đêm</span
+                    >
+                  </div>
+                  <% } %> <% }); %> <% } else { %>
+                  <p class="text-muted fst-italic">Không có thông tin phòng.</p>
+                  <% } %>
+                </div>
+
+                <% if (booking.specialRequest) { %>
+                <div class="col-12">
+                  <div class="p-2 bg-white border rounded">
+                    <small class="text-muted d-block fw-bold"
+                      >Yêu cầu đặc biệt:</small
+                    >
+                    <span class="fst-italic"
+                      ><%= booking.specialRequest %></span
+                    >
+                  </div>
+                </div>
+                <% } %>
+
+                <div class="col-12"><hr class="text-muted" /></div>
+
+                <div class="col-12 text-end">
+                  <h4 class="mb-0">
+                    Tổng Cộng:
+                    <span class="text-danger fw-bold">
+                      <%= booking.totalPrice ?
+                      booking.totalPrice.toLocaleString('vi-VN') : '0' %> đ
+                    </span>
+                  </h4>
+                  <div class="mt-2">
+                    <small class="text-muted">Trạng thái:</small>
+                    <% if (booking.status === 'PENDING') { %>
+                    <span class="badge bg-warning text-dark">Chờ xác nhận</span>
+                    <% } else if (booking.status === 'CONFIRMED') { %>
+                    <span class="badge bg-success">Đã xác nhận</span>
+                    <% } else { %>
+                    <span class="badge bg-secondary"
+                      ><%= booking.status %></span
+                    >
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <% if (booking.payment && booking.payment.paymentStatus ===
+            'SUCCESS') { %>
+
+            <div
+              class="alert alert-success text-center shadow-sm border-success"
+              role="alert"
+              style="border-left: 5px solid #198754"
+            >
+              <h4 class="alert-heading mb-2">
+                <i class="fas fa-check-circle text-success"></i> Đã Thanh Toán
+              </h4>
+              <p class="mb-0">
+                Cảm ơn quý khách. Hẹn gặp quý khách tại khách sạn.
+              </p>
+            </div>
+
+            <% } else { %>
+
+            <div class="card border-danger shadow-sm">
+              <div class="card-body text-center bg-light">
+                <h5 class="card-title text-danger mb-3">
+                  Thanh Toán Trực Tuyến
+                </h5>
+                <p class="card-text text-muted mb-4">
+                  Quý khách vui lòng thanh toán để hoàn tất đặt phòng.
+                </p>
+
+                <form action="/payment/momo/create" method="POST">
+                  <input
+                    type="hidden"
+                    name="bookingId"
+                    value="<%= booking.id %>"
+                  />
+                  <button
+                    type="submit"
+                    class="btn btn-danger btn-lg px-5 py-3 shadow hover-shadow"
+                    style="
+                      background-color: #a50064;
+                      border-color: #a50064;
+                      transition: all 0.3s ease;
+                    "
+                  >
+                    <i class="fas fa-wallet me-2" aria-hidden="true"></i>
+                    <strong>Thanh toán ngay qua MoMo</strong>
+                  </button>
+                </form>
+
+                <div class="mt-3 text-muted small">
+                  <% if (booking.payment && booking.payment.paymentStatus ===
+                  'FAILED') { %>
+                  <span class="text-danger fw-bold"
+                    ><i class="fas fa-exclamation-triangle"></i> Giao dịch trước
+                    đó thất bại. Vui lòng thử lại.</span
+                  >
+                  <% } else { %>
+                  <i class="fas fa-shield-alt me-1"></i> Giao dịch bảo mật bởi
+                  MoMo <% } %>
+                </div>
+              </div>
+            </div>
+
+            <% } %>
+          </div>
+          <% } %>
+          <div class="text-center mt-5 mb-5">
+            <a href="/" class="btn btn-secondary me-3 px-4 py-2">
+              <i class="fas fa-home me-2"></i>Về Trang Chủ
+            </a>
+            <a href="/my-bookings" class="btn btn-outline-primary px-4 py-2">
+              <i class="fas fa-history me-2"></i>Xem Lịch Sử Đặt Phòng
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<%- include('../layout/footer'); -%>

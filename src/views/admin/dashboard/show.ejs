@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Dashboard - Hotel Manager</title>
+    <link href="/admin/css/styles.css" rel="stylesheet" />
+    <script
+      src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body class="sb-nav-fixed">
+    <%- include('../layout/header'); -%>
+
+    <div id="layoutSidenav">
+      <%- include('../layout/sidenav'); -%>
+      <div id="layoutSidenav_content">
+        <main>
+          <div class="container-fluid px-4">
+            <div
+              class="d-flex justify-content-between align-items-center mt-4 mb-4"
+            >
+              <h1 class="mb-0">Dashboard</h1>
+              <a href="/admin/export-report" class="btn btn-success shadow-sm">
+                <i class="fas fa-file-excel me-2"></i> Xuất Báo Cáo Excel
+              </a>
+            </div>
+            <ol class="breadcrumb mb-4">
+              <li class="breadcrumb-item active">Dashboard</li>
+            </ol>
+
+            <!-- Stats Cards -->
+            <div class="row">
+              <div class="col-xl-3 col-md-6">
+                <div class="card bg-primary text-white mb-4">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>Tổng Booking</div>
+                      <div class="h3 mb-0">
+                        <%= typeof info !== 'undefined' && info &&
+                        info.countBooking ? info.countBooking : 0 %>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                  >
+                    <a
+                      class="small text-white stretched-link"
+                      href="/admin/booking"
+                      >Xem chi tiết</a
+                    >
+                    <div class="small text-white">
+                      <i class="fas fa-angle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6">
+                <div class="card bg-success text-white mb-4">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>Doanh Thu</div>
+                      <div class="h3 mb-0">
+                        <%= typeof info !== 'undefined' && info &&
+                        info.totalRevenue ?
+                        info.totalRevenue.toLocaleString('vi-VN') : '0' %>đ
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                  >
+                    <a
+                      class="small text-white stretched-link"
+                      href="/admin/payment"
+                      >Xem chi tiết</a
+                    >
+                    <div class="small text-white">
+                      <i class="fas fa-angle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6">
+                <div class="card bg-warning text-white mb-4">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>Tổng Phòng</div>
+                      <div class="h3 mb-0">
+                        <%= typeof info !== 'undefined' && info &&
+                        info.countRoom ? info.countRoom : 0 %>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                  >
+                    <a
+                      class="small text-white stretched-link"
+                      href="/admin/room"
+                      >Xem chi tiết</a
+                    >
+                    <div class="small text-white">
+                      <i class="fas fa-angle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xl-3 col-md-6">
+                <div class="card bg-danger text-white mb-4">
+                  <div class="card-body">
+                    <div
+                      class="d-flex justify-content-between align-items-center"
+                    >
+                      <div>Người Dùng</div>
+                      <div class="h3 mb-0">
+                        <%= typeof info !== 'undefined' && info &&
+                        info.countUser ? info.countUser : 0 %>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="card-footer d-flex align-items-center justify-content-between"
+                  >
+                    <a
+                      class="small text-white stretched-link"
+                      href="/admin/user"
+                      >Xem chi tiết</a
+                    >
+                    <div class="small text-white">
+                      <i class="fas fa-angle-right"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Charts & Tables -->
+            <div class="row">
+              <!-- Booking Status Chart -->
+              <div class="col-lg-6">
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Tỷ lệ Trạng thái Booking
+                  </div>
+                  <div class="card-body">
+                    <canvas
+                      id="bookingStatusChart"
+                      width="100%"
+                      height="50"
+                    ></canvas>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recent Bookings Table -->
+              <div class="col-lg-6">
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <i class="fas fa-table me-1"></i>
+                    Booking Mới Nhất
+                  </div>
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-striped table-hover">
+                        <thead>
+                          <tr>
+                            <th>ID</th>
+                            <th>Khách hàng</th>
+                            <th class="text-end">Tổng tiền</th>
+                            <th class="text-center">Trạng thái</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% if (typeof info !== 'undefined' && info &&
+                          info.recentBookings && info.recentBookings.length > 0)
+                          { %> <% info.recentBookings.forEach(function(booking)
+                          { %>
+                          <tr>
+                            <td>#<%= booking.id %></td>
+                            <td>
+                              <% if (booking.guestName) { %> <%=
+                              booking.guestName %> <% } else if (booking.user &&
+                              booking.user.fullName) { %> <%=
+                              booking.user.fullName %> <% } else { %> N/A <% }
+                              %>
+                            </td>
+                            <td class="text-end">
+                              <strong
+                                ><%= booking.totalPrice.toLocaleString('vi-VN')
+                                %>đ</strong
+                              >
+                            </td>
+                            <td class="text-center">
+                              <% let badgeClass = 'secondary'; if
+                              (booking.status === 'PENDING') badgeClass =
+                              'warning text-dark'; else if (booking.status ===
+                              'CONFIRMED') badgeClass = 'success'; else if
+                              (booking.status === 'CHECKED_IN') badgeClass =
+                              'info'; else if (booking.status === 'CHECKED_OUT')
+                              badgeClass = 'secondary'; else if (booking.status
+                              === 'CANCELLED') badgeClass = 'danger'; %>
+                              <span class="badge bg-<%= badgeClass %>">
+                                <%= booking.status %>
+                              </span>
+                            </td>
+                          </tr>
+                          <% }); %> <% } else { %>
+                          <tr>
+                            <td colspan="4" class="text-center text-muted">
+                              Không có booking nào
+                            </td>
+                          </tr>
+                          <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div class="card-footer text-center">
+                    <a href="/admin/booking" class="btn btn-sm btn-primary"
+                      >Xem tất cả</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <%- include('../layout/footer'); -%>
+      </div>
+    </div>
+
+    <!-- Pass data to JavaScript via data attributes -->
+    <div
+      id="chartDataHolder"
+      data-pending="<%= typeof info !== 'undefined' && info && info.bookingStatusData ? (info.bookingStatusData['PENDING'] || 0) : 0 %>"
+      data-confirmed="<%= typeof info !== 'undefined' && info && info.bookingStatusData ? (info.bookingStatusData['CONFIRMED'] || 0) : 0 %>"
+      data-checkedin="<%= typeof info !== 'undefined' && info && info.bookingStatusData ? (info.bookingStatusData['CHECKED_IN'] || 0) : 0 %>"
+      data-checkedout="<%= typeof info !== 'undefined' && info && info.bookingStatusData ? (info.bookingStatusData['CHECKED_OUT'] || 0) : 0 %>"
+      data-cancelled="<%= typeof info !== 'undefined' && info && info.bookingStatusData ? (info.bookingStatusData['CANCELLED'] || 0) : 0 %>"
+      style="display: none"
+    ></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/admin/js/scripts.js"></script>
+
+    <script>
+      // Pure JavaScript - No EJS mixing
+      document.addEventListener("DOMContentLoaded", function () {
+        const chartHolder = document.getElementById("chartDataHolder");
+        const ctx = document.getElementById("bookingStatusChart");
+
+        if (chartHolder && ctx) {
+          const pending = parseInt(chartHolder.dataset.pending) || 0;
+          const confirmed = parseInt(chartHolder.dataset.confirmed) || 0;
+          const checkedIn = parseInt(chartHolder.dataset.checkedin) || 0;
+          const checkedOut = parseInt(chartHolder.dataset.checkedout) || 0;
+          const cancelled = parseInt(chartHolder.dataset.cancelled) || 0;
+
+          new Chart(ctx, {
+            type: "pie",
+            data: {
+              labels: [
+                "Pending",
+                "Confirmed",
+                "Checked In",
+                "Checked Out",
+                "Cancelled",
+              ],
+              datasets: [
+                {
+                  label: "Số lượng",
+                  data: [pending, confirmed, checkedIn, checkedOut, cancelled],
+                  backgroundColor: [
+                    "rgba(255, 206, 86, 0.8)",
+                    "rgba(75, 192, 192, 0.8)",
+                    "rgba(54, 162, 235, 0.8)",
+                    "rgba(153, 102, 255, 0.8)",
+                    "rgba(255, 99, 132, 0.8)",
+                  ],
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: "bottom",
+                },
+              },
+            },
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

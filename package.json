@@ -1,0 +1,77 @@
+{
+  "name": "js-pro",
+  "version": "1.0.0",
+  "description": "HaNguyen051 hoc nodejs",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon",
+    "dev": "nodemon",
+    "start:debug": "nodemon --inspect=9229 -e ts,tsx --exec node -r ts-node/register -r tsconfig-paths/register ./src/index.ts"
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "ignore": [
+      "node_modules"
+    ],
+    "exec": "ts-node -r tsconfig-paths/register ./src/index.ts"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "keywords": [
+    "node.js",
+    "js",
+    "express",
+    "mongodb"
+  ],
+  "author": "HaNguyen051",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HaNguyen051/"
+  },
+  "homepage": "https://github.com/HaNguyen051/",
+  "dependencies": {
+    "@prisma/client": "^6.3.0",
+    "@quixo3/prisma-session-store": "3.1.13",
+    "@types/connect-flash": "^0.0.40",
+    "axios": "^1.13.2",
+    "bcrypt": "5.1.1",
+    "bcryptjs": "^3.0.2",
+    "connect-flash": "^0.1.1",
+    "dotenv": "16.4.7",
+    "ejs": "3.1.10",
+    "exceljs": "^4.4.0",
+    "express": "5.0.1",
+    "express-session": "1.18.1",
+    "groq-sdk": "^0.37.0",
+    "multer": "1.4.5-lts.1",
+    "mysql2": "3.12.0",
+    "passport": "0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "1.0.0",
+    "uuid": "11.0.5",
+    "zod": "3.24.2"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "5.0.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/ejs": "3.1.5",
+    "@types/express": "5.0.0",
+    "@types/express-session": "1.18.1",
+    "@types/multer": "1.4.12",
+    "@types/node": "22.10.7",
+    "@types/passport": "1.0.17",
+    "@types/passport-google-oauth20": "^2.0.17",
+    "@types/passport-local": "1.0.38",
+    "nodemon": "3.1.9",
+    "prisma": "^6.3.0",
+    "ts-node": "10.9.2",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.7.3"
+  }
+}
