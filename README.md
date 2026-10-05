@@ -75,9 +75,9 @@
 ### 💻 Các Bước Thực Hiện
 
 #### Bước 1: Sao chép dự án về máy
-```bash
-git clone https://github.com/HaNguyen051/hotel-manager-v3.git
-cd hotel-manager-v3
+```powershell
+git clone https://github.com/HoangKhai141/Hotel_Manager.git
+cd Hotel_Manager
 ```
 
 #### Bước 2: Cài đặt các thư viện dependencies
@@ -86,24 +86,33 @@ npm install
 ```
 
 #### Bước 3: Cấu hình biến môi trường
-*   Nhân bản file `.env.example` thành `.env` ở thư mục gốc:
-    ```bash
-    cp .env.example .env
-    ```
-*   Mở file `.env` và điền đầy đủ các thông tin cấu hình (Database connection, Google Client ID, Momo credentials và Groq API Key).
+Tạo bản `.env` từ file mẫu bằng PowerShell:
+```powershell
+Copy-Item .env.example .env
+```
+
+Mở `.env` và cấu hình ít nhất:
+* `DATABASE_URL`: thông tin kết nối MySQL theo dạng `mysql://USER:PASSWORD@localhost:3306/hotel_manager`. Tạo database `hotel_manager` trong MySQL trước nếu database này chưa tồn tại.
+* `SESSION_SECRET`: thay giá trị mẫu bằng một chuỗi bí mật riêng.
+* Giữ `MOMO_MODE=mock` để chạy giả lập thanh toán nội bộ; chế độ này không cần credentials MoMo và không phát sinh giao dịch thật.
+* Google OAuth và Groq API key chỉ cần thiết nếu muốn sử dụng các chức năng đăng nhập Google và chatbot AI.
+
+Không tải file `.env` lên GitHub và không chia sẻ các secret trong file này.
 
 #### Bước 4: Khởi tạo cơ sở dữ liệu với Prisma
-*   Đồng bộ schema Prisma vào MySQL để tạo các bảng cơ sở dữ liệu:
-    ```bash
-    npx prisma db push
-    ```
+Đồng bộ schema Prisma vào MySQL để tạo/cập nhật các bảng:
+```bash
+npx prisma db push
+```
 
 #### Bước 5: Chạy dự án (Development Mode)
 ```bash
 npm run dev
 ```
 
-> **Lưu ý**: Khi chạy lệnh khởi động server lần đầu tiên, hệ thống sẽ tự động gọi file seeder để nạp sẵn dữ liệu mẫu bao gồm: 2 Roles, 12 Phòng khách sạn cao cấp, 4 Dịch vụ mẫu và 2 tài khoản thử nghiệm.
+Mở `http://localhost:8000` sau khi server khởi động thành công. Ứng dụng tự chạy seeder khi khởi động để tạo dữ liệu mẫu còn thiếu.
+
+> **Lưu ý:** Tài khoản mẫu bên dưới chỉ dùng cho môi trường phát triển. Hãy đổi mật khẩu trước khi dùng môi trường thật.
 
 ---
 
